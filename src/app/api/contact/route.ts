@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,20 +15,29 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Log to console (wire to Resend/SendGrid later)
-    console.log('Contact form submission:', {
-      name,
-      email,
-      subject,
-      message,
-      timestamp: new Date().toISOString(),
-    })
+    // Send email using Resend
+    const { error } = await resend.emails.send({
+      from: 'Portfolio Contact <onboarding@resend.dev>',
+      to: 'kmmay15@gmail.com',
+      replyTo: email,
+      subject: `New message from ${name} via Portfolio: ${subject || 'No Subject'}`,
+      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+    });
+
+    if (error) {
+      console.error('Resend Error:', error)
+      return NextResponse.json(
+        { error: 'Failed to send message' },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ success: true, message: 'Message received!' })
-  } catch {
+  } catch (err) {
+    console.error('API Error:', err)
     return NextResponse.json(
-      { error: 'Invalid request body' },
-      { status: 400 }
+      { error: 'Something went wrong' },
+      { status: 500 }
     )
   }
 }
