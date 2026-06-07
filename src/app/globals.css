@@ -1,26 +1,203 @@
 @import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg: #02020a;
+  --surface: #09091a;
+  --surface-2: #0e0e20;
+  --border: rgba(255,255,255,0.06);
+  --border-focus: rgba(99,102,241,0.55);
+  --primary: #6366f1;
+  --primary-dim: #4f46e5;
+  --secondary: #8b5cf6;
+  --accent: #06b6d4;
+  --success: #10b981;
+  --danger: #ef4444;
+  --text-1: #f1f5f9;
+  --text-2: #94a3b8;
+  --text-3: #475569;
+  --glow-primary: rgba(99,102,241,0.20);
+  --glow-cyan: rgba(6,182,212,0.15);
+  --glow-violet: rgba(139,92,246,0.18);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  overflow-x: hidden;
+}
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.glass {
+  background: rgba(9, 9, 26, 0.6);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+}
+
+.glass-hover:hover {
+  border-color: rgba(99,102,241,0.35);
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.2), 0 24px 64px rgba(99,102,241,0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.glass-focus:focus-within {
+  border-color: rgba(99,102,241,0.55);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 35%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-ring {
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/*
+  ============================================================
+  COPY-PASTE ADDITIONS FOR globals.css
+  Add these at the BOTTOM of your existing globals.css file.
+  Do NOT replace your existing styles — just append these.
+  ============================================================
+*/
+
+/* ─── 1. Film Grain Overlay ───────────────────────────────
+   Creates a static SVG noise texture over the entire page.
+   Gives the portfolio a cinematic, textured feel.
+   pointer-events: none means it never interferes with clicks.
+─────────────────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+
+/* ─── 2. Hide default cursor (needed for CustomCursor) ────
+   Only applied on non-touch devices.
+─────────────────────────────────────────────────────────── */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+
+/* ─── 3. Animated gradient border on stat/metric cards ────
+   Add className="animated-border" to your GlassCard / stat
+   card elements in AboutSection.tsx to activate.
+─────────────────────────────────────────────────────────── */
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border {
+  position: relative;
+  border: none !important;
+  background-clip: padding-box;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--border-angle),
+    #6366f1 0%,
+    #06b6d4 25%,
+    #6366f1 50%,
+    #06b6d4 75%,
+    #6366f1 100%
+  );
+  z-index: -1;
+  animation: spin-border 4s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.animated-border:hover::before {
+  opacity: 1;
+}
+
+@keyframes spin-border {
+  to { --border-angle: 360deg; }
+}
+
+
+/* ─── 4. Smooth scroll behavior (if not already set) ─────── */
+html {
+  scroll-behavior: smooth;
 }
